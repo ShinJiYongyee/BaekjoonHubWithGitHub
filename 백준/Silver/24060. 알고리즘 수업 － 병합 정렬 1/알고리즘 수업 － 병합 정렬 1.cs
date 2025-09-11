@@ -1,90 +1,67 @@
-namespace empty
+namespace Empty_Csharp
 {
-
-    public class Program
+    internal class Program
     {
-        static int[] tmp;
-        static int saveCount = 0;
+        static int[] tmp = new int[1_000_000];
+        static int target = -1;
         static int K;
-        static int answer = 0;
-        static int trueAnswer = 0;
-        static void Sort(int[] arr, int left, int right)
+        static int saveCount = 0;
+        static void merge_sort(int[] A, int headIndex, int tailIndex)
         {
-            if (left < right)
+            if (headIndex < tailIndex)
             {
-                int middle = (left + right) / 2;
-                Sort(arr, left, middle);
-                Sort(arr, middle + 1, right);
-                Merge(arr, left, middle, right);
+                int middleIndex = (headIndex + tailIndex) / 2;
+                merge_sort(A, headIndex, middleIndex);
+                merge_sort(A, middleIndex + 1, tailIndex);
+                merge(A, headIndex, middleIndex, tailIndex);
             }
         }
-
-        static void Merge(int[] arr, int left, int middle, int right)
+        static void merge(int[] A, int headIndex, int middleIndex, int tailIndex)
         {
-            int i = left;
-            int j = middle + 1;
-            int t = 0;
-            while (i <= middle && j <= right)
+            int i = headIndex;
+            int j = middleIndex + 1;
+            int t = 1;
+            while (i <= middleIndex && j <= tailIndex)
             {
-                if (arr[i] <= arr[j])
+                if (A[i] <= A[j])
                 {
-                    tmp[t++] = arr[i++];
+                    tmp[t++] = A[i++];
                 }
                 else
                 {
-                    tmp[t++] = arr[j++];
+                    tmp[t++] = A[j++];
                 }
-                //PrintArr(tmp);
-
+                saveCount++;
+                if (saveCount == K)
+                {
+                    target = tmp[t - 1];
+                }
             }
-            while (i <= middle)
+            while (i <= middleIndex)
             {
-                tmp[t++] = arr[i++];
-                //PrintArr(tmp);
-
+                tmp[t++] = A[i++];
+                saveCount++;
+                if (saveCount == K)
+                {
+                    target = tmp[t - 1];
+                }
             }
-            while (j <= right)
+            while (j <= tailIndex)
             {
-                tmp[t++] = arr[j++];
-                //PrintArr(tmp);
-
+                tmp[t++] = A[j++];
+                saveCount++;
+                if (saveCount == K)
+                {
+                    target = tmp[t - 1];
+                }
             }
-            i = left;
-            t = 0;
-            while (i <= right)
+            i = headIndex;
+            t = 1;
+            while (i <= tailIndex)
             {
-                arr[i] = tmp[t];
-                IncreaseSaveCount(tmp[t]);
-                i++;
-                t++;
-                //PrintArr(tmp);
-
+                A[i++] = tmp[t++];     
             }
         }
-
-        //static void PrintArr(int[] arr)
-        //{
-        //    foreach (int i in arr)
-        //    {
-        //        //(i + " ");
-        //    }
-        //    //();
-
-        //}
-
-        static void IncreaseSaveCount(int t)
-        {
-            if (saveCount == K)
-            {
-                //("answer is " + answer);
-                trueAnswer = answer;
-            }
-            saveCount++;
-            //("savecount is " + saveCount);
-            //("saved data is " + t);
-            answer = t;
-        }
-
         static void Main(string[] args)
         {
             string s1 = Console.ReadLine();
@@ -92,36 +69,27 @@ namespace empty
             int N = int.Parse(nums1[0]);
             K = int.Parse(nums1[1]);
 
-            int[] A = new int[N];
-            tmp = new int[N];
+            int[] arr = new int[N];
 
             string s2 = Console.ReadLine();
             string[] nums2 = s2.Split(' ');
-            for (int i = 0; i < nums2.Length; i++)
+            for (int i = 0; i < N; i++)
             {
-                A[i] = int.Parse(nums2[i]);
+                arr[i] = int.Parse(nums2[i]);
             }
 
-            //("N is " + N + "\n" + "K is " + K);
+            merge_sort(arr, 0, N - 1);
 
-            //PrintArr(A);
-
-            Sort(A, 0, N - 1);
-
-            //PrintArr(A);
-            ////(saveCount);
-
-            if(saveCount >= K)
+            /*
+            // 정렬 기능 점검용 출력 코드
+            foreach (int n in arr)
             {
-                //("trueanswer is");
-                Console.WriteLine(trueAnswer);
+                Console.Write($"{n} ");
             }
-            else
-            {
-                Console.WriteLine(-1);
-            }
+            Console.WriteLine();
+            */
 
-
+            Console.WriteLine(target);
 
         }
     }
